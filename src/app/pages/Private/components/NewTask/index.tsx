@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box, Fab, Modal, TextField,
   Typography, useTheme,
@@ -11,7 +11,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { CustomDatePicker } from './DatePicker';
 import { CustomTimePicker } from './TimePicker';
 import { useAppDispatch } from '@/app/redux/hooks';
-import { taskActions } from '@/app/redux/modules/tasks';
+import { userActions } from '@/app/redux/modules/user';
 
 export function NewTask() {
   const theme = useTheme();
@@ -44,7 +44,7 @@ export function NewTask() {
   };
 
   const handleSaveTask = async () => {
-    dispatch(taskActions.addTask({
+    dispatch(userActions.addNewTask({
       title,
       date: date.toDate(),
       hour: hour.format('HH:mm'),

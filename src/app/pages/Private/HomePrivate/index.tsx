@@ -5,19 +5,22 @@ import {
   Snackbar, Tab, Tabs,
 } from '@mui/material';
 
-import { useAppSelector } from '@redux/hooks';
+import { useAppDispatch, useAppSelector } from '@redux/hooks';
 import { selectorTasks } from '@redux/modules/tasks';
 
 import { NoTask } from '../components/NoTask';
 import { NewTask } from '../components/NewTask';
 import { Task } from '../components/Task';
+import { usersActions } from '@/app/redux/modules/users';
 
 type TTabValue = 'all' | 'completed' | 'incomplete' | 'hidden';
 
 export function HomePrivate() {
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
-  const tasksRedux = useAppSelector(selectorTasks.selectAll);
-  const [tasks, setTasks] = useState(tasksRedux);
+  /* const tasksRedux = useAppSelector(selectorTasks.selectAll); */
+  const userLogged = useAppSelector((state) => state.user);
+  const [tasks, setTasks] = useState(userLogged.tasks);
 
   const [stateSnackbar, setStateSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -40,26 +43,28 @@ export function HomePrivate() {
   const handleFilterTasks = (filter:TTabValue) => {
     switch (filter) {
       case 'all':
-        setTasks(tasksRedux);
+        setTasks(userLogged.tasks);
         break;
       case 'completed':
-        setTasks(tasksRedux.filter((task) => task.done && !task.hidden));
+        setTasks(userLogged.tasks.filter((task) => task.done && !task.hidden));
         break;
       case 'incomplete':
-        setTasks(tasksRedux.filter((task) => !task.done && !task.hidden));
+        setTasks(userLogged.tasks.filter((task) => !task.done && !task.hidden));
         break;
       case 'hidden':
-        setTasks(tasksRedux.filter((task) => task.hidden));
+        setTasks(userLogged.tasks.filter((task) => task.hidden));
         break;
       default:
-        setTasks(tasksRedux);
+        setTasks(userLogged.tasks);
     }
   };
 
   useEffect(() => {
     setLoading(false);
     handleFilterTasks(tab);
-  }, [tasksRedux]);
+
+    dispatch(usersActions.updateUser({ id: userLogged.email, changes: userLogged }));
+  }, [userLogged]);
 
   useEffect(() => {
     setPages(Math.ceil(tasks.length / maxTaskPerPage));
@@ -78,9 +83,9 @@ export function HomePrivate() {
   return (
     <Box className="flex flex-col flex-1">
       {loading && <CircularProgress />}
-      {!loading && tasksRedux.length === 0 && (<NoTask />)}
+      {/* {!loading && tasksRedux.length === 0 && (<NoTask />)} */}
 
-      {!loading && tasksRedux.length > 0 && (
+      {!loading && (
         <>
           <Tabs
             variant="fullWidth"
@@ -98,7 +103,7 @@ export function HomePrivate() {
           </Tabs>
 
           <Box className="flex flex-col gap-2 mx-2 md:mx-6 lg:mx-10 xl:mx-20">
-            {taskPage.map((task) => (
+            {tasks.map((task) => (
               <Task
                 key={task.id}
                 task={task}

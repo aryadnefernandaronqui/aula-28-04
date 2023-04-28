@@ -13,15 +13,15 @@ import {
   VisibilityOff as VisibilityOffOutlinedIcon,
 } from '@mui/icons-material';
 
-// import { useAppDispatch, useAppSelector } from '@/app/redux/hooks';
-// import { usersActions, usersSelectors } from '@/app/redux/modules/users';
+import { useAppDispatch, useAppSelector } from '@/app/redux/hooks';
+import { usersActions, usersSelectors } from '@/app/redux/modules/users';
 
 type SignUpProps = {
   handleFlip: () => void;
 }
 
 export function SignUp({ handleFlip }: SignUpProps) {
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   const [name, setName] = useState('');
   const [nameIsValid, setNameIsValid] = useState(true);
@@ -91,18 +91,18 @@ export function SignUp({ handleFlip }: SignUpProps) {
     }
   }, [nameIsValid, emailIsValid, passwordIsValid, passwordConfirmation]);
 
-  useEffect(() => {
-  }, [name, email, password, passwordConfirmation]);
+  const user = useAppSelector((state) => usersSelectors.selectById(state, email));
 
-  // const user = useAppSelector((state) => usersSelectors.selectById(state, email));
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // if (!user) {
-    // dispatch(usersActions.addUser({ email, password, name }));
-    // handleFlip();
-    // } else {
-    // alert('Email already exists');
-    // }
+    if (!user) {
+      dispatch(usersActions.addUser({
+        email, password, name, tasks: [],
+      }));
+      handleFlip();
+    } else {
+      alert('Email already exists');
+    }
   };
   return (
     <Box className="flex flex-1 justify-center content-center items-center">

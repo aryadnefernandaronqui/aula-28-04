@@ -59,7 +59,7 @@ export function Task({ task, handleOpenSnackbar, handleSetMessage }: TTaskProps)
     handleOpenSnackbar();
   };
 
-  const handleUpdateTask = async () => {
+  const handleUpdateTask = () => {
     if (!date || !hour) return;
     dispatch(taskActions.updateTask({
       id: task.id,

@@ -1,7 +1,7 @@
 import {
   ChangeEvent, FormEvent, useEffect, useState,
 } from 'react';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import validator from 'validator';
 
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/20/solid';
@@ -15,22 +15,22 @@ import {
   VisibilityOff as VisibilityOffOutlinedIcon,
 } from '@mui/icons-material';
 
-// import { useAppDispatch, useAppSelector } from '@redux/hooks';
-// import { userActions } from '@redux/modules/user';
-// import { usersSelectors } from '@/app/redux/modules/users';
+import { useAppDispatch, useAppSelector } from '@redux/hooks';
+import { userActions } from '@redux/modules/user';
+import { usersSelectors } from '@/app/redux/modules/users';
 
 type SignInProps = {
   handleFlip: () => void;
 }
 
 export function SignIn({ handleFlip }: SignInProps) {
-  // const redirect = useNavigate();
-  // const dispatch = useAppDispatch();
+  const redirect = useNavigate();
+  const dispatch = useAppDispatch();
 
   const [email, setEmail] = useState('');
   const [emailIsValid, setEmailIsValid] = useState(true);
 
-  // const userExists = useAppSelector((state) => usersSelectors.selectById(state, email));
+  const userExists = useAppSelector((state) => usersSelectors.selectById(state, email));
 
   const [password, setPassword] = useState('');
   const [passwordIsValid, setPasswordIsValid] = useState(true);
@@ -69,17 +69,17 @@ export function SignIn({ handleFlip }: SignInProps) {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // if (isSubmitting) {
-    //   if (userExists) {
-    //     dispatch(userActions.login({
-    //       ...userExists,
-    //       remember: rememberMe,
-    //     }));
-    //     redirect('/auth');
-    //   } else {
-    //     alert('Usuário não encontrado!');
-    //   }
-    // }
+    if (isSubmitting) {
+      if (userExists && userExists.password === password) {
+        dispatch(userActions.login({
+          ...userExists,
+          remember: rememberMe,
+        }));
+        redirect('/auth');
+      } else {
+        alert('Usuário não encontrado!');
+      }
+    }
   };
 
   useEffect(() => {
