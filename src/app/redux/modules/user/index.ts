@@ -51,6 +51,19 @@ const slice = createSlice({
     addNewTask: (state, action: PayloadAction<TTask>) => {
       state.tasks.push(action.payload);
     },
+
+    updateTask: (state, action: PayloadAction<TTask>) => {
+      const task = action.payload;
+      const posicao = state.tasks.findIndex((item) => item.id === task.id);
+
+      state.tasks[posicao] = task;
+    },
+    deleteTask: (state, action: PayloadAction<string>) => {
+      const id = action.payload;
+      const posicao = state.tasks.findIndex((item) => item.id === id);
+
+      state.tasks.splice(posicao, 1);
+    },
   },
 
 });

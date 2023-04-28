@@ -21,6 +21,7 @@ import { taskActions } from '@/app/redux/modules/tasks';
 import { TTask } from '@/@types/app';
 import { CustomDatePicker } from '../NewTask/DatePicker';
 import { CustomTimePicker } from '../NewTask/TimePicker';
+import { userActions } from '@/app/redux/modules/user';
 
 type TTaskProps = {
   task: TTask;
@@ -43,31 +44,27 @@ export function Task({ task, handleOpenSnackbar, handleSetMessage }: TTaskProps)
   const handleClose = () => { setTitle(task.title); setOpenModalEdit(false); };
 
   const handleToggleDone = () => {
-    dispatch(taskActions.updateTask({
-      id: task.id,
-      changes: {
-        done: !task.done,
-      },
+    dispatch(userActions.updateTask({
+      ...task,
+      done: !task.done,
     }));
     handleSetMessage(`Task ${task.done ? 'undone' : 'done'}`);
     handleOpenSnackbar();
   };
 
   const handleDeleteTask = () => {
-    dispatch(taskActions.removeTask(task.id));
+    dispatch(userActions.deleteTask(task.id));
     handleSetMessage('Task deleted');
     handleOpenSnackbar();
   };
 
   const handleUpdateTask = () => {
     if (!date || !hour) return;
-    dispatch(taskActions.updateTask({
-      id: task.id,
-      changes: {
-        title,
-        date: date.toDate(),
-        hour: hour.format('HH:mm'),
-      },
+    dispatch(userActions.updateTask({
+      ...task,
+      date: date.toDate(),
+      hour: hour.format('HH:mm'),
+      title,
     }));
     handleSetMessage('Task updated');
     handleOpenSnackbar();
@@ -75,11 +72,9 @@ export function Task({ task, handleOpenSnackbar, handleSetMessage }: TTaskProps)
   };
 
   const handleToggleVisibility = () => {
-    dispatch(taskActions.updateTask({
-      id: task.id,
-      changes: {
-        hidden: !task.hidden,
-      },
+    dispatch(userActions.updateTask({
+      ...task,
+      hidden: !task.hidden,
     }));
     handleSetMessage(`Task ${task.hidden ? 'visible' : 'hidden'}`);
     handleOpenSnackbar();
