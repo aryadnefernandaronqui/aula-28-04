@@ -15,6 +15,7 @@ export function CustomTimePicker({ setValue, value }:TimePickerProps) {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <MobileTimePicker
         value={value}
+        // @ts-ignore
         onChange={setValue}
         renderInput={(params) => (
           <TextField
